@@ -61,13 +61,14 @@ final class ProfilerImpl implements Profiler {
   @Override
   public void writeData(Path path) throws IOException {
     // Create or append the file at path
-    Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
 
-    // writeData to the writer
-    writeData(writer);
+      // writeData to the writer
+      writeData(writer);
 
-    // flush the writer
-    writer.flush();
+      // flush the writer
+      writer.flush();
+    }
   }
 
   @Override

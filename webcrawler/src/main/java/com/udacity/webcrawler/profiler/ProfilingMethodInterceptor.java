@@ -1,5 +1,6 @@
 package com.udacity.webcrawler.profiler;
 
+import java.lang.IllegalAccessException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,9 +42,10 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
         result = method.invoke(target, args);
       }
       catch (InvocationTargetException e) {
-        System.out.println("------------------------------------------------------------------");
-        System.out.println(e);
         throw e.getTargetException();
+      }
+      catch (IllegalAccessException e){
+        throw new RuntimeException(e);
       }
       finally {
         // stop the clock, calculate elapsed time and record the results.
@@ -59,9 +61,10 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
         result = method.invoke(target, args);
       }
       catch (InvocationTargetException e) {
-        System.out.println("***************************************************************");
-        System.out.println(e);
         throw e.getTargetException();
+      }
+      catch (IllegalAccessException e){
+        throw new RuntimeException(e);
       }
     }
 

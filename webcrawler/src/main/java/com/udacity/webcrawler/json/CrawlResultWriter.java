@@ -32,8 +32,7 @@ public final class CrawlResultWriter {
     CrawlerConfiguration retVal;    // value to be returned
 
     // create a file reader at the provided path and create a CrawlerConfiguration based on the contents.
-    try {
-      FileWriter output = new FileWriter(path.toString(), true);
+    try (FileWriter output = new FileWriter(path.toString(), true)) {
       write(output);
       output.close();
     }

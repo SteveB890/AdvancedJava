@@ -30,8 +30,7 @@ public final class ConfigurationLoader {
     CrawlerConfiguration retVal;    // value to be returned
 
     // create a file reader at the provided path and create a CrawlerConfiguration based on the contents.
-    try {
-      FileReader input = new FileReader(_path.toString());
+    try (FileReader input = new FileReader(_path.toString())) {
       retVal = read(input);
       input.close();
     }
