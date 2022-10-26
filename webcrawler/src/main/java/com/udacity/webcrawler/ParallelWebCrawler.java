@@ -139,12 +139,13 @@ final class ParallelWebCrawler implements WebCrawler {
                 return;
             }
         }
+
+        // add the page to the list of visited pages and parse the page (return if the URL has already been added)
         if(!visitedUrls.add(url)) {
             return;
         }
 
-        // add the page to the list of visited pages and parse the page
-        visitedUrls.add(url);
+        // parse the page
         PageParser.Result result = parserFactory.get(url).parse();
 
         // update the counts map for keywords that were found on the page.

@@ -34,7 +34,6 @@ public final class CrawlResultWriter {
     // create a file reader at the provided path and create a CrawlerConfiguration based on the contents.
     try (FileWriter output = new FileWriter(path.toString(), true)) {
       write(output);
-      output.close();
     }
     catch (Exception e){
       // do nothing
