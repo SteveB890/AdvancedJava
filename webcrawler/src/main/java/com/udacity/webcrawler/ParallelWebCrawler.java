@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,10 @@ final class ParallelWebCrawler implements WebCrawler {
     private final int maxDepth;
     private Map<String, Integer> counts;
     private Set<String> visitedUrls;
+
+    // used to protect multi-threaded data.
+    private final ReentrantLock lock;
+
 
     /** ParallelWebCrawler construction
      * @param clock - the current time.
@@ -62,6 +67,9 @@ final class ParallelWebCrawler implements WebCrawler {
     this.pool = new ForkJoinPool(Math.min(threadCount, getMaxParallelism()));
     this.maxDepth = maxDepth;
     this.ignoredUrls = ignoredUrls;
+
+    // initialize the lock
+    lock = new ReentrantLock();
   }
 
   // get the page parser via dependency injection
@@ -141,8 +149,18 @@ final class ParallelWebCrawler implements WebCrawler {
         }
 
         // add the page to the list of visited pages and parse the page (return if the URL has already been added)
-        if(!visitedUrls.add(url)) {
-            return;
+        try {
+            lock.lock();
+
+            // if the url has been visited, return
+            if (visitedUrls.contains(url)) {
+                return;
+            }
+
+            // add the url to the visited list and process the page.
+            visitedUrls.add(url);
+        } finally {
+            lock.unlock();
         }
 
         // parse the page
